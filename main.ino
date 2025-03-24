@@ -9,10 +9,11 @@
 #define R_S 4//ir sensor Right
 #define L_S 2 //ir sensor Left
 #define M_s 12//ir sensor Middle
+
 void setup(){ 
 pinMode(R_S, INPUT); 
 pinMode(L_S, INPUT); 
-pinMode(M_s, INPUT);
+pinMode(M_S, INPUT);
 pinMode(enA, OUTPUT); 
 pinMode(in1, OUTPUT); 
 pinMode(in2, OUTPUT); 
@@ -22,17 +23,16 @@ pinMode(enB, OUTPUT);
 digitalWrite(enA, HIGH); 
 digitalWrite(enB, HIGH);
 
-
-float error = 0.0;
-float kp = 1;
-float ki = 0;
-float kd = 0;
-
-
 delay(1000);
 }
-void loop(){  
-
+void loop(){
+    float error = 0;
+    float leftSensor = digitalRead(L_S);
+    float rightSensor = digitalRead(R_S);
+    float middleSensor = digitalRead(M_S);
+    error = (rightSensor - leftSensor)*(1-middleSensor);
+    float pidValue = pidController(error);
+    drive(pidValue, 0.5);
 }
 
 void drive(float direction, float speed) {
@@ -68,4 +68,34 @@ void drive(float direction, float speed) {
         digitalWrite(in4, LOW);
         digitalWrite(in3, LOW);
     }
+}
+
+float pidController(float error) {
+    float kp = 1;
+    float ki = 0;
+    float kd = 0;
+    static float previousError = 0.0;
+    static float integral = 0.0;
+
+    // Calculate proportional term
+    float proportional = kp * error;
+
+    // Calculate integral term
+    integral += error;
+    float integralTerm = ki * integral;
+
+    // Calculate derivative term
+    float derivative = kd * (error - previousError);
+
+    // Update previous error
+    previousError = error;
+
+    // Calculate PID output
+    float pidOut = proportional + integralTerm + derivative;
+
+    // Clamp PID output to the range [-1, 1]
+    if (pidOut > 1) pidOut = 1;
+    if (pidOut < -1) pidOut = -1;
+
+    return pidOut;
 }
