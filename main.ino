@@ -8,7 +8,7 @@
 #define enB 3 //Enable2 L293 Pin enB 
 #define R_S 4//ir sensor Right
 #define L_S 2 //ir sensor Left
-#define M_s 12//ir sensor Middle
+#define M_S 12//ir sensor Middle
 
 void setup(){ 
 pinMode(R_S, INPUT); 
