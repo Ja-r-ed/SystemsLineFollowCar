@@ -2,13 +2,13 @@
 //More Information: https://circuitdigest.com/microcontroller-projects/arduino-uno-line-follower-robot 
 #define enA 11//Enable1 L293 Pin enA 
 #define in1 6 //Motor1  L293 Pin in1 
-#define in2 5 //Motor1  L293 Pin in1 
+#define in2 3 //Motor1  L293 Pin in1 
 #define in3 9 //Motor2  L293 Pin in1 
 #define in4 10 //Motor2  L293 Pin in1 
-#define enB 3 //Enable2 L293 Pin enB 
-#define R_S 4//ir sensor Right
-#define L_S 2 //ir sensor Left
-#define M_S 12//ir sensor Middle
+#define enB 5 //Enable2 L293 Pin enB 
+#define R_S 7 //ir sensor Right
+#define L_S 12 //ir sensor Left
+#define M_S 2//ir sensor Middle
 
 void setup(){ 
 pinMode(R_S, INPUT); 
@@ -30,44 +30,31 @@ void loop(){
     float leftSensor = digitalRead(L_S);
     float rightSensor = digitalRead(R_S);
     float middleSensor = digitalRead(M_S);
-    error = (rightSensor - leftSensor)*(1-middleSensor);
+    error = (rightSensor - leftSensor); //*(1-middleSensor);
     float pidValue = pidController(error);
-    drive(pidValue, 0.5);
+    drive(pidValue);
 }
 
-void drive(float direction, float speed) {
+void drive(float direction) {
     // Clamp direction to the range [-1, 1]
     if (direction > 1) direction = 1;
     if (direction < -1) direction = -1;
 
-    // Clamp speed to the range [0, 1]
-    if (speed > 1) speed = 1;
-    if (speed < 0) speed = 0;
-
     // Calculate motor speeds based on direction and speed
-    float rightMotorSpeed = speed * (1 - direction);
-    float leftMotorSpeed = speed * (1 + direction);
+    float rightMotorSpeed = 1 * (1 - direction);
+    float leftMotorSpeed = 1 * (1 + direction);
 
     // Set motor speeds
     analogWrite(enA, (int)(rightMotorSpeed * 255)); // Right motor speed
     analogWrite(enB, (int)(leftMotorSpeed * 255));  // Left motor speed
 
     // Set motor directions
-    if (rightMotorSpeed > 0) {
-        digitalWrite(in1, HIGH);
-        digitalWrite(in2, LOW);
-    } else {
-        digitalWrite(in1, LOW);
-        digitalWrite(in2, LOW);
-    }
+      digitalWrite(in1, HIGH);
+      digitalWrite(in2, LOW);
 
-    if (leftMotorSpeed > 0) {
-        digitalWrite(in4, HIGH);
-        digitalWrite(in3, LOW);
-    } else {
-        digitalWrite(in4, LOW);
-        digitalWrite(in3, LOW);
-    }
+
+      digitalWrite(in4, HIGH);
+      digitalWrite(in3, LOW);
 }
 
 float pidController(float error) {
