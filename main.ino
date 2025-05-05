@@ -1,5 +1,4 @@
-// Arduino Line Follower Robot Code
-//More Information: https://circuitdigest.com/microcontroller-projects/arduino-uno-line-follower-robot 
+
 #define enA 11//Enable1 L293 Pin enA 
 #define in1 6 //Motor1  L293 Pin in1 
 #define in2 3 //Motor1  L293 Pin in1 
@@ -45,7 +44,7 @@ void drive(float direction) {
     float leftMotorSpeed = 1 * (1 + direction);
 
     // Set motor speeds
-    analogWrite(enA, (int)(rightMotorSpeed * 255)); // Right motor speed
+    analogWrite(enA, (int)(rightMotorSpeed * 255)); // Right motor speed out of 255
     analogWrite(enB, (int)(leftMotorSpeed * 255));  // Left motor speed
 
     // Set motor directions
@@ -59,7 +58,7 @@ void drive(float direction) {
 
 float pidController(float error) {
     float kp = 1;
-    float ki = 0;
+    float ki = 0.;
     float kd = 0;
     static float previousError = 0.0;
     static float integral = 0.0;
